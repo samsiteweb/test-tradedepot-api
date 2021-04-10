@@ -1,7 +1,8 @@
 const Comments = require("./comment.model");
 const asyncHandler = require("../../common/asyncHandler/async");
 const { successResponse, failResponse } = require("../../common/responseHandler/response");
-const {sendMail, sendSms} = require("../../common/functions/universal")
+const { sendMail, sendSms } = require("../../common/functions/universal")
+
 exports.postComment = asyncHandler(async (req, res) => {
   const { productId, comment } = req.body
   let post = {
@@ -32,7 +33,7 @@ exports.postComment = asyncHandler(async (req, res) => {
 
   if (postedComment) {
     let subject = 'TRADEDEPOT - Comment Notification'
-  let msg = `${req.authUser.fName} ${req.authUser.lName} just made a comment on your product. Visit to reply this comment`
+  let msg = `A comment was made on your product. Visit https://test-tradedepot.herokuapp.com to reply this comment`
  
     let resp = await sendMail({ to: req.authUser.email, subject, msg })
  
@@ -42,7 +43,7 @@ exports.postComment = asyncHandler(async (req, res) => {
   postedComment = await Comments.create(commentPayload)
   
   let subject = 'TRADEDEPOT - Comment Notification'
-  let msg = `${req.authUser.fName} ${req.authUser.lName} just made a comment on your product. Visit to reply this comment`
+  let msg = `A comment was made on your product. Visit https://test-tradedepot.herokuapp.com to reply this comment`
   let resp = await sendMail({ to: req.authUser.email, subject, msg })
   
   return successResponse(res, postedComment)
