@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const geocoder = require('../../common/functions/geocoder')
+
+
 const userSchema = new schema(
   {
     fName: {
@@ -61,9 +64,26 @@ const userSchema = new schema(
       type: Boolean,
       default: true,
     },
-    isSynced: {
-      type: Boolean,
-      default: false,
+    address: {
+      type: String,
+      default: null
+    },
+    location: {
+      // GeoJSON Point
+      type: {
+        type: String,
+        enum: ['Point']
+      },
+      coordinates: {
+        type: [Number],
+        index: '2dsphere'
+      },
+      formattedAddress: String,
+      street: String,
+      city: String,
+      state: String,
+      zipcode: String,
+      country: String,
     },
     about: {
       type: String,
@@ -93,6 +113,24 @@ const userSchema = new schema(
     toObject: { virtuals: true },
   }
 );
+
+
+
+userSchema.pre("save", async function (next) {
+  const loc = await geocoder.geocode(this.address);
+  this.location = {
+    type: 'Point',
+    coordinates: [loc[0].longitude, loc[0].latitude],
+    formattedAddress: loc[0].formattedAddress,
+    street: loc[0].streetName,
+    city: loc[0].city,
+    stateCode: loc[0].stateCode,
+    zipcode: loc[0].zipcode,
+    country: loc[0].countryCode,
+  }
+  next();
+});
+
 
 // Match user password
 userSchema.methods.matchPassword = async function (password) {

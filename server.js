@@ -14,7 +14,8 @@ connectDB();
 
 // Route files
 const auth = require("./core/apis/authModule/auth.routes")
-
+const products = require("./core/apis/productMgt/productMgt.routes")
+const comment = require("./core/apis/comments/comment.routes")
 // setting server variables
 const app = express();
 
@@ -46,6 +47,8 @@ if (process.env.NODE_ENV === "development") {
 
 // api routes decleration
 app.use(`${apiVersion}/auth`, auth)
+app.use(`${apiVersion}/product`, products)
+app.use(`${apiVersion}/comment`, comment)
 
 
 

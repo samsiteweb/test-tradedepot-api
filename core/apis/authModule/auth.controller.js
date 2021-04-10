@@ -28,6 +28,7 @@ exports.createAnAccount = asyncHandler(async (req, res) => {
 exports.accountSignIn = asyncHandler(async (req, res, next) => {
   let { email, password } = req.body;
 
+  console.log(req.body)
   email = email.toLowerCase()
 
   if (!email || !password) {

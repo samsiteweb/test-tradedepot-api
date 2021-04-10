@@ -8,7 +8,7 @@ const { authUser } = require("../../apis/authModule/auth.controller");
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;
   const { authorization } = req.headers;
-
+console.log(authorization)
   if (authorization && authorization.startsWith("Bearer")) {
     token = authorization.split(" ")[1];
   }
@@ -21,7 +21,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   // verify token
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.authUser = await User.findOne({ email: decoded.user }).select('xroles');
+    req.authUser = await User.findOne({ email: decoded.user }).select('xroles fName lName email');
     next();
   } catch (error) {
     return next(new ErrorResponse("Not authorized", 401));
